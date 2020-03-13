@@ -5,7 +5,8 @@
       v-for="(item, i) in list"
       :key="i"
       @click="selectCategory(item, i)"
-    >{{item.name}}</span>
+      >{{ item.name }}</span
+    >
   </div>
 </template>
 
@@ -18,7 +19,7 @@ export default {
     selectCategory(item, i) {
       console.log(i, item.name, item.selected, this.list[i].selected);
       this.list[i].selected = !item.selected;
-      this.$emit('selected', item, i)
+      this.$emit('selected', item, i);
     }
   }
 };

@@ -6,7 +6,7 @@
         :list="categories"
         @selected="selectCategory"
       ></category-list>
-      <search-results v-bind:results="searchResults"></search-results>
+      <restaurant-list v-bind:results="searchResults"></restaurant-list>
     </div>
     <div class="right-container">
       <map-view></map-view>
@@ -19,7 +19,7 @@ import axios from 'axios';
 
 import AddressForm from './components/AddressForm.vue';
 import CategoryList from './components/CategoryList.vue';
-import SearchResults from './components/SearchResults.vue';
+import RestaurantList from './components/RestaurantList.vue';
 import MapView from './components/MapView.vue';
 
 import category_list from './assets/categories.json';
@@ -44,7 +44,7 @@ export default {
   components: {
     AddressForm,
     CategoryList,
-    SearchResults,
+    RestaurantList,
     MapView
   },
   methods: {
