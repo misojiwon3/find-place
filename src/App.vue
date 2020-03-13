@@ -2,11 +2,8 @@
   <div id="app">
     <div class="left-container">
       <address-form @enter="receiveQuery"></address-form>
-      <category-list
-        :list="categories"
-        @selected="selectCategory"
-      ></category-list>
-      <restaurant-list v-bind:results="searchResults"></restaurant-list>
+      <category-list :list="categories" @selected="selectCategory"></category-list>
+      <restaurant-list :results="filteredRestaurantList"></restaurant-list>
     </div>
     <div class="right-container">
       <map-view></map-view>
@@ -15,7 +12,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 
 import AddressForm from './components/AddressForm.vue';
 import CategoryList from './components/CategoryList.vue';
@@ -25,20 +22,24 @@ import MapView from './components/MapView.vue';
 import category_list from './assets/categories.json';
 import place_list from './assets/places.json';
 
+const defaultCategory = '전체';
+
 export default {
   name: 'App',
   created() {
-    this.categories = [
-      { code: 0, name: '전체', selected: true },
-      ...category_list
-    ].map(m => {
-      return { ...m, selected: false };
-    });
+    this.categories = [{ code: 0, name: defaultCategory, selected: true }, ...category_list].map(
+      m => {
+        return { ...m, selected: false };
+      }
+    );
+    this.getPlaces();
   },
   data() {
     return {
-      searchResults: [],
-      categories: []
+      restaurantList: [],
+      filteredRestaurantList: [],
+      categories: [],
+      currentCategory: defaultCategory
     };
   },
   components: {
@@ -50,25 +51,38 @@ export default {
   methods: {
     receiveQuery(query) {
       console.log(query);
-
-      this.searchResults = place_list;
+      this.restaurantList = place_list;
+      this.filteredRestaurantList = this.restaurantList;
     },
-    selectCategory(item, index) {
-      console.log(item, index);
+    selectCategory({ name }) {
+      console.log(name);
+      console.log(this.restaurantList.length === 0);
+      if (this.restaurantList.length === 0) {
+        this.getPlaces();
+      }
+      this.currentCategory = name;
+      this.fetchRestauranthList();
+    },
+    fetchRestauranthList() {
+      this.filteredRestaurantList = this.restaurantList.filter(
+        r => this.currentCategory === defaultCategory || r.category.includes(this.currentCategory)
+      );
     },
     getPlaces() {
-      const url =
-        'https://my-json-server.typicode.com/misojiwon3/my-fake-server/places';
-      axios
-        .get(url)
-        .then(response => {
-          const data = response.data;
-          console.log(data);
-          this.searchResults = data;
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      this.restaurantList = place_list;
+      this.fetchRestauranthList();
+      // const url =
+      //   'https://my-json-server.typicode.com/misojiwon3/my-fake-server/places';
+      // axios
+      //   .get(url)
+      //   .then(response => {
+      //     const data = response.data;
+      //     console.log(data);
+      //     this.restaurantList = data;
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
     }
   }
 };

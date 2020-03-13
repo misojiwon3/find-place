@@ -1,5 +1,5 @@
 <template>
-  <div class="results-container">
+  <div class="list-container">
     <div v-if="results.length">
       <restaurant-item
         v-for="(result, i) in results"
@@ -25,18 +25,7 @@ export default {
 </script>
 
 <style>
-.result-item {
-  padding: 20px 0;
+.list-container {
   border-top: solid 1px rgba(0, 0, 0, 0.1);
-}
-
-.result-item:last-child {
-  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
-}
-
-.result-item div {
-  position: relative;
-  left: 0;
-  padding: 0 0 10px 0;
 }
 </style>
