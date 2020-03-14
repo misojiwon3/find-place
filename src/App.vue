@@ -24,6 +24,7 @@ import category_list from './assets/categories.json';
 // import place_list from './assets/places.json';
 
 const defaultCategory = '전체';
+const defaultDining = 'DINING_ALL';
 
 export default {
   name: 'App',
@@ -64,15 +65,25 @@ export default {
     },
     async requestPlacesList(query) {
       try {
-        const response = await getGc(query);
-        const x = response.data.addresses[0]['x'];
-        const y = response.data.addresses[0]['y'];
-        console.log(x, y);
-        // 좌표 계산하여 특정 반경 내의 장소들 불러옴
-        const coord = `${x},${y}`;
-        const boundary = this.makeBoundary(x, y);
-        const response2 = await getPlaces(coord, 30, boundary);
-        console.log(response2.data.result.place.list);
+        const { data } = await getGc(query);
+        console.log(data);
+        if (data.totalCount) {
+          const x = data.results[0]['x'];
+          const y = data.results[0]['y'];
+          console.log(x, y);
+          // 좌표 계산하여 특정 반경 내의 장소들 불러옴
+          const coord = `${x},${y}`;
+          const boundary = this.makeBoundary(x, y);
+          const response2 = await getPlaces(defaultDining, coord, boundary, 50);
+          console.log(response2.data.result.place.list);
+          this.restaurantList = response2.data.result.place.list;
+          this.filteredRestaurantList = this.restaurantList;
+        } else {
+          errorProccessor({
+            code: 201,
+            message: '검색 결과가 없습니다. 정확한 주소를 입력하세요.'
+          });
+        }
       } catch (error) {
         console.log(error);
         errorProccessor(error.response.data);
@@ -80,15 +91,17 @@ export default {
     },
     fetchRestauranthList() {
       this.filteredRestaurantList = this.restaurantList.filter(
-        r => this.currentCategory === defaultCategory || r.category.includes(this.currentCategory)
+        r =>
+          this.currentCategory === defaultCategory ||
+          r.category.join().includes(this.currentCategory)
       );
     },
     makeBoundary(x, y) {
-      const fixedValue = 0.004;
-      const minX = x - fixedValue;
-      const minY = y - fixedValue;
-      const maxX = x + fixedValue;
-      const maxY = y + fixedValue;
+      const difference = 0.004;
+      const minX = x - difference;
+      const minY = y - difference;
+      const maxX = x + difference;
+      const maxY = y + difference;
 
       return `${minX};${minY};${maxX};${maxY}`;
     }
