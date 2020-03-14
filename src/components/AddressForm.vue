@@ -3,7 +3,7 @@
     <input
       type="text"
       v-model="address"
-      @keyup.enter="enterQuery"
+      @keyup.enter.stop.prevent="enterQuery"
       placeholder="주소를 입력하세요."
     />
     <button type="reset" v-if="address.length" @click="resetAddress"></button>
@@ -18,10 +18,15 @@ export default {
     };
   },
   methods: {
-    enterQuery() {
-      console.log('on key up');
-      this.$emit('enter', this.address);
-      this.address = '';
+    enterQuery(e) {
+      if (this.address) {
+        console.log(e);
+        console.log('on key up');
+        this.$emit('enter', this.address);
+        this.address = '';
+      } else {
+        console.log('입력값이 없습니다.');
+      }
     },
     resetAddress() {
       this.address = '';

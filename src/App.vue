@@ -18,9 +18,10 @@ import AddressForm from './components/AddressForm.vue';
 import CategoryList from './components/CategoryList.vue';
 import RestaurantList from './components/RestaurantList.vue';
 import MapView from './components/MapView.vue';
+import { getPlaces, getGc, errorProccessor } from '@/api/api.js';
 
 import category_list from './assets/categories.json';
-import place_list from './assets/places.json';
+// import place_list from './assets/places.json';
 
 const defaultCategory = '전체';
 
@@ -32,7 +33,6 @@ export default {
         return { ...m, selected: false };
       }
     );
-    this.getPlaces();
   },
   data() {
     return {
@@ -51,8 +51,7 @@ export default {
   methods: {
     receiveQuery(query) {
       console.log(query);
-      this.restaurantList = place_list;
-      this.filteredRestaurantList = this.restaurantList;
+      this.requestPlacesList(query);
     },
     selectCategory({ name }) {
       console.log(name);
@@ -63,26 +62,35 @@ export default {
       this.currentCategory = name;
       this.fetchRestauranthList();
     },
+    async requestPlacesList(query) {
+      try {
+        const response = await getGc(query);
+        const x = response.data.addresses[0]['x'];
+        const y = response.data.addresses[0]['y'];
+        console.log(x, y);
+        // 좌표 계산하여 특정 반경 내의 장소들 불러옴
+        const coord = `${x},${y}`;
+        const boundary = this.makeBoundary(x, y);
+        const response2 = await getPlaces(coord, 30, boundary);
+        console.log(response2.data.result.place.list);
+      } catch (error) {
+        console.log(error);
+        errorProccessor(error.response.data);
+      }
+    },
     fetchRestauranthList() {
       this.filteredRestaurantList = this.restaurantList.filter(
         r => this.currentCategory === defaultCategory || r.category.includes(this.currentCategory)
       );
     },
-    getPlaces() {
-      this.restaurantList = place_list;
-      this.fetchRestauranthList();
-      // const url =
-      //   'https://my-json-server.typicode.com/misojiwon3/my-fake-server/places';
-      // axios
-      //   .get(url)
-      //   .then(response => {
-      //     const data = response.data;
-      //     console.log(data);
-      //     this.restaurantList = data;
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
+    makeBoundary(x, y) {
+      const fixedValue = 0.004;
+      const minX = x - fixedValue;
+      const minY = y - fixedValue;
+      const maxX = x + fixedValue;
+      const maxY = y + fixedValue;
+
+      return `${minX};${minY};${maxX};${maxY}`;
     }
   }
 };
