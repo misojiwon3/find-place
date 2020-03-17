@@ -1,42 +1,57 @@
 [
   {
+  "code": 0,
+  "name": "전체",
+  "query": "DINING_ALL"
+  },
+  {
     "code": 1,
-    "name": "한식"
+    "name": "한식",
+    "query": "DINING_KOREAN"
   },
   {
     "code": 2,
-    "name": "양식"
+    "name": "일식",
+    "query": "DINING_JAPANESE"
   },
   {
     "code": 3,
-    "name": "일식"
+    "name": "중식",
+    "query": "DINING_CHINESE"
   },
   {
     "code": 4,
-    "name": "중식"
+    "name": "양식",
+    "query": "DINING_WESTERN"
   },
   {
     "code": 5,
-    "name": "아시아"
+    "name": "아시아",
+    "query": "DINING_ASIAN"
   },
   {
     "code": 6,
-    "name": "패스트푸드"
+    "name": "패스트푸드",
+    "query": "DINING_FASTFOOD"
   },
   {
     "code": 7,
-    "name": "피자"
+    "name": "피자",
+    "query": "DINING_PIZZA"
   },
   {
     "code": 8,
-    "name": "치킨"
+    "name": "치킨",
+    "query": "DINING_CHICKEN"
   },
   {
     "code": 9,
-    "name": "분식"
+    "name": "분식",
+    "query": "DINING_SNACK"
   },
   {
     "code": 10,
-    "name": "술집"
+    "name": "술집",
+    "query": "DINING_DRINK"
   }
 ]

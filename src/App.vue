@@ -29,11 +29,9 @@ const defaultDining = 'DINING_ALL';
 export default {
   name: 'App',
   created() {
-    this.categories = [{ code: 0, name: defaultCategory, selected: true }, ...category_list].map(
-      m => {
-        return { ...m, selected: false };
-      }
-    );
+    this.categories = category_list.map(c => {
+      return { ...c, selected: c.name === defaultCategory };
+    });
   },
   data() {
     return {
@@ -54,14 +52,31 @@ export default {
       console.log(query);
       this.requestPlacesList(query);
     },
-    selectCategory({ name }) {
-      console.log(name);
+    selectCategory(category, i) {
+      console.log(category);
+      this.arrangeCategories(i);
       console.log(this.restaurantList.length === 0);
       if (this.restaurantList.length === 0) {
-        this.getPlaces();
+        // this.getPlaces();
       }
-      this.currentCategory = name;
+
+      this.currentCategory = category;
       this.fetchRestauranthList();
+      console.log(this.categories.map(c => c.selected).join());
+    },
+    arrangeCategories(index) {
+      console.log(index);
+      if (index === 0) {
+        this.categories = this.categories.map(c => {
+          c.selected = c.name === defaultCategory;
+          return c;
+        });
+      } else {
+        this.categories[index].selected = !this.categories[index].selected;
+        const tempCategories = this.categories.slice(1, this.categories.length);
+        // '전체'를 제외한 카테고리 중 하나라도 true면 '전체'는 false
+        this.categories[0].selected = !tempCategories.some(c => c.selected);
+      }
     },
     async requestPlacesList(query) {
       try {

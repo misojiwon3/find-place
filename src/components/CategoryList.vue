@@ -2,6 +2,7 @@
   <div class="category-container">
     <span
       class="category-tag"
+      :class="{ selected: item.selected }"
       v-for="(item, i) in list"
       :key="i"
       @click="selectCategory(item, i)"
@@ -16,9 +17,8 @@ export default {
     list: Array
   },
   methods: {
-    selectCategory(item, i) {
-      this.list[i].selected = !item.selected;
-      this.$emit('selected', item);
+    selectCategory(item, index) {
+      this.$emit('selected', item, index);
     }
   }
 };
@@ -37,5 +37,9 @@ export default {
   line-height: 28px;
   color: #333;
   cursor: pointer;
+}
+.category-tag.selected {
+  background-color: #0475f4;
+  color: white;
 }
 </style>
