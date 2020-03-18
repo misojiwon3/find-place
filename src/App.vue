@@ -12,8 +12,6 @@
 </template>
 
 <script>
-// import axios from 'axios';
-
 import AddressForm from './components/AddressForm.vue';
 import CategoryList from './components/CategoryList.vue';
 import RestaurantList from './components/RestaurantList.vue';
@@ -21,10 +19,8 @@ import MapView from './components/MapView.vue';
 import { getPlaces, getGc, errorProccessor } from '@/api/api.js';
 
 import category_list from './assets/categories.json';
-// import place_list from './assets/places.json';
 
 const defaultCategory = '전체';
-const defaultDining = 'DINING_ALL';
 
 export default {
   name: 'App',
@@ -32,13 +28,18 @@ export default {
     this.categories = category_list.map(c => {
       return { ...c, selected: c.name === defaultCategory };
     });
+    navigator.geolocation.getCurrentPosition(p => {
+      this.currentCoordinate.x = p.coords.longitude;
+      this.currentCoordinate.y = p.coords.latitude;
+      this.requestPlaceList();
+    });
   },
   data() {
     return {
       restaurantList: [],
       filteredRestaurantList: [],
       categories: [],
-      currentCategory: defaultCategory
+      currentCoordinate: { x: 0, y: 0 }
     };
   },
   components: {
@@ -50,22 +51,13 @@ export default {
   methods: {
     receiveQuery(query) {
       console.log(query);
-      this.requestPlacesList(query);
+      this.requestGc(query);
     },
     selectCategory(category, i) {
-      console.log(category);
       this.arrangeCategories(i);
-      console.log(this.restaurantList.length === 0);
-      if (this.restaurantList.length === 0) {
-        // this.getPlaces();
-      }
-
-      this.currentCategory = category;
-      this.fetchRestauranthList();
-      console.log(this.categories.map(c => c.selected).join());
+      this.requestPlaceList();
     },
     arrangeCategories(index) {
-      console.log(index);
       if (index === 0) {
         this.categories = this.categories.map(c => {
           c.selected = c.name === defaultCategory;
@@ -78,21 +70,13 @@ export default {
         this.categories[0].selected = !tempCategories.some(c => c.selected);
       }
     },
-    async requestPlacesList(query) {
+    async requestGc(query) {
       try {
         const { data } = await getGc(query);
-        console.log(data);
         if (data.totalCount) {
-          const x = data.results[0]['x'];
-          const y = data.results[0]['y'];
-          console.log(x, y);
-          // 좌표 계산하여 특정 반경 내의 장소들 불러옴
-          const coord = `${x},${y}`;
-          const boundary = this.makeBoundary(x, y);
-          const response2 = await getPlaces(defaultDining, coord, boundary, 50);
-          console.log(response2.data.result.place.list);
-          this.restaurantList = response2.data.result.place.list;
-          this.filteredRestaurantList = this.restaurantList;
+          this.currentCoordinate.x = data.results[0]['x'];
+          this.currentCoordinate.y = data.results[0]['y'];
+          this.requestPlaceList();
         } else {
           errorProccessor({
             code: 201,
@@ -104,12 +88,19 @@ export default {
         errorProccessor(error.response.data);
       }
     },
-    fetchRestauranthList() {
-      this.filteredRestaurantList = this.restaurantList.filter(
-        r =>
-          this.currentCategory === defaultCategory ||
-          r.category.join().includes(this.currentCategory)
-      );
+    async requestPlaceList() {
+      // 좌표 계산하여 특정 반경 내의 장소들 불러옴
+      const query = this.categories
+        .filter(c => c.selected)
+        .map(c => c.query)
+        .join(':');
+      console.log('query : ' + query);
+      console.log(this.currentCoordinate.x, this.currentCoordinate.y);
+      const coord = `${this.currentCoordinate.x},${this.currentCoordinate.y}`;
+      const boundary = this.makeBoundary(this.currentCoordinate.x, this.currentCoordinate.y);
+      const response = await getPlaces(query, coord, boundary, 50);
+      this.restaurantList = response.data.result.place.list;
+      this.filteredRestaurantList = this.restaurantList;
     },
     makeBoundary(x, y) {
       const difference = 0.004;
