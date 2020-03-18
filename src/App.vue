@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="right-container">
-      <map-view></map-view>
+      <map-view :x="currentCoordinate.x" :y="currentCoordinate.y"></map-view>
     </div>
   </div>
 </template>
@@ -31,8 +31,8 @@ export default {
       return { ...c, selected: c.name === defaultCategory };
     });
     navigator.geolocation.getCurrentPosition(p => {
-      this.currentCoordinate.x = p.coords.longitude;
-      this.currentCoordinate.y = p.coords.latitude;
+      this.currentCoordinate.x = p.coords.longitude.toString();
+      this.currentCoordinate.y = p.coords.latitude.toString();
       this.requestPlaceList();
     });
   },
@@ -41,7 +41,7 @@ export default {
       restaurantList: [],
       filteredRestaurantList: [],
       categories: [],
-      currentCoordinate: { x: 0, y: 0 }
+      currentCoordinate: { x: '0', y: '0' }
     };
   },
   components: {
@@ -131,26 +131,25 @@ export default {
 .right-container {
   position: absolute;
 }
-.container-wrapper {
-  padding: 0 20px;
-}
-.map-container {
-  border: solid 1px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-}
 .left-container {
-  width: 70%;
+  width: 350px;
+  height: calc(100% - 60px);
   left: 0;
 }
+.container-wrapper {
+  height: 100%;
+}
+.list-container {
+  height: calc(100% - 170px);
+  overflow: scroll;
+}
 .right-container {
-  width: 30%;
-  height: calc(100% - 100px);
+  width: calc(100% - 350px);
+  height: calc(100% - 60px);
   right: 0;
 }
 .map-container {
   border: solid 1px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  margin: 0 10px;
   height: 100%;
 }
 </style>

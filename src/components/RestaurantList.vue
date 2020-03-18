@@ -1,6 +1,6 @@
 <template>
   <div class="list-container">
-    <div v-if="results.length">
+    <div class="list-wrapper" v-if="results.length">
       <restaurant-item v-for="(result, i) in results" :key="i" :item="result"></restaurant-item>
     </div>
     <div v-else>결과가 없습니다</div>

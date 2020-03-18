@@ -36,6 +36,7 @@ export default {
 <style scoped>
 .form-container {
   position: relative;
+  height: 50px;
 }
 input {
   width: 90%;

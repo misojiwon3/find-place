@@ -26,7 +26,8 @@ export default {
 
 <style scoped>
 .category-container {
-  margin: 10px 0;
+  padding: 10px 0;
+  height: 100px;
 }
 .category-tag {
   display: inline-block;
