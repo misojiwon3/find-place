@@ -1,9 +1,11 @@
 <template>
   <div id="app">
     <div class="left-container">
-      <address-form @enter="receiveQuery"></address-form>
-      <category-list :list="categories" @selected="selectCategory"></category-list>
-      <restaurant-list :results="filteredRestaurantList"></restaurant-list>
+      <div class="container-wrapper">
+        <address-form @enter="receiveQuery"></address-form>
+        <category-list :list="categories" @selected="selectCategory"></category-list>
+        <restaurant-list :results="filteredRestaurantList"></restaurant-list>
+      </div>
     </div>
     <div class="right-container">
       <map-view></map-view>
@@ -128,7 +130,13 @@ export default {
 .left-container,
 .right-container {
   position: absolute;
+}
+.container-wrapper {
   padding: 0 20px;
+}
+.map-container {
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  padding: 10px;
 }
 .left-container {
   width: 70%;
@@ -136,6 +144,13 @@ export default {
 }
 .right-container {
   width: 30%;
+  height: calc(100% - 100px);
   right: 0;
+}
+.map-container {
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin: 0 10px;
+  height: 100%;
 }
 </style>

@@ -18,10 +18,8 @@ export default {
     };
   },
   methods: {
-    enterQuery(e) {
+    enterQuery() {
       if (this.address) {
-        console.log(e);
-        console.log('on key up');
         this.$emit('enter', this.address);
         this.address = '';
       } else {
