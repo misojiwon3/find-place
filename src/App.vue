@@ -87,6 +87,8 @@ export default {
     async requestGc(query) {
       try {
         const { data } = await getGc(query);
+        console.log(data.totalCount);
+        console.log(data.results[0]);
         if (data.totalCount) {
           this.currentCoordinate.x = data.results[0]['x'];
           this.currentCoordinate.y = data.results[0]['y'];
@@ -112,10 +114,11 @@ export default {
       console.log(this.currentCoordinate.x, this.currentCoordinate.y);
       const coord = `${this.currentCoordinate.x},${this.currentCoordinate.y}`;
       const boundary = this.makeBoundary(this.currentCoordinate.x, this.currentCoordinate.y);
-      const response = await getPlaces(query, coord, boundary, 50);
+      const { data } = await getPlaces(query, coord, boundary, 50);
 
-      if (response.data.result.place) {
-        this.restaurantList = response.data.result.place.list;
+      if (data.result.place) {
+        console.log(data.result.place);
+        this.restaurantList = data.result.place.list;
       } else {
         this.restaurantList = [];
         // this.getCurrentCoordinate();
@@ -128,7 +131,7 @@ export default {
       // this.filteredRestaurantList = this.restaurantList;
     },
     makeBoundary(x, y) {
-      const difference = 0.002;
+      const difference = 0.006;
       const minX = x - difference;
       const minY = y - difference;
       const maxX = x + difference;
@@ -142,8 +145,9 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
+  font-family: 'Apple SD Gothic Neo', 'Apple SD Gothic', sans-serif;
+  font-size: 15px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

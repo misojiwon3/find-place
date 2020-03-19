@@ -1,9 +1,13 @@
 <template>
   <div class="list-item">
     <div class="name">{{ item.name }}</div>
-    <div class="address">{{ item.address }}</div>
-    <div class="tel">{{ item.tel }}</div>
-    <div>{{ item.category }}</div>
+    <div class="category-tel">
+      <span class="category">{{ displayCategory }}</span>
+      |
+      <span class="tel">{{ item.tel }}</span>
+    </div>
+    <div class="address">{{ item.roadAddress }}</div>
+    <!-- <div class="tel">{{ item.tel }}</div> -->
   </div>
 </template>
 
@@ -11,14 +15,29 @@
 export default {
   props: {
     item: Object
+  },
+  computed: {
+    displayCategory() {
+      let categories = Object.assign([], this.item.category);
+      const index = categories.indexOf('음식점');
+      if (index >= 0) {
+        categories.splice(index, 1);
+      }
+      return categories[0];
+    }
   }
 };
 </script>
 
 <style scoped>
 .list-item {
-  padding: 20px 0;
+  padding: 20px;
   border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+.list-item .name {
+  font-weight: bold;
+  font-size: 18px;
 }
 
 /* .result-item:last-child {
@@ -28,6 +47,15 @@ export default {
 .list-item div {
   position: relative;
   left: 0;
-  padding: 0 0 10px 0;
+  padding: 0 0 2px 0;
+}
+.category {
+  color: #777777;
+}
+.tel {
+  color: #386791;
+}
+.address {
+  color: #969696;
 }
 </style>
