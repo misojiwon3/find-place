@@ -7,36 +7,52 @@
 </template>
 
 <script>
+let HOME_PATH = window.HOME_PATH || '.';
 let latlng = null;
 let marker = null;
 let map = null;
 
 export default {
   props: {
-    x: String,
-    y: String
+    coord: Object,
+    results: Array
   },
   created() {
     console.log('created');
   },
   watch: {
-    x(value, old) {
-      console.log(1, this.x, value, old);
-      latlng = new naver.maps.LatLng(this.y, this.x);
-      map = new naver.maps.Map('map', {
-        center: latlng,
-        zoom: 15
+    coord: {
+      deep: true,
+      handler() {
+        latlng = new naver.maps.LatLng(this.coord.y, this.coord.x);
+        map = new naver.maps.Map('map', {
+          center: latlng,
+          zoom: 17
+        });
+        marker = new naver.maps.Marker({
+          position: latlng,
+          map: map,
+          icon: {
+            url: HOME_PATH + '/sam.png',
+            size: new naver.maps.Size(50, 52),
+            origin: new naver.maps.Point(0, 0),
+            anchor: new naver.maps.Point(25, 26)
+          }
+        });
+        console.log('latlng : ' + latlng);
+      }
+    },
+    results(value) {
+      value.map(r => {
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(r.y, r.x),
+          map: map
+        });
       });
-      marker = new naver.maps.Marker({
-        position: latlng,
-        map: map
-      });
-      console.log('latlng : ' + latlng);
     }
   },
   mounted() {
     console.log('mounted');
-    console.log(2, this.y, this.x);
   }
 };
 </script>

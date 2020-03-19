@@ -4,11 +4,11 @@
       <div class="container-wrapper">
         <address-form @enter="receiveQuery"></address-form>
         <category-list :list="categories" @selected="selectCategory"></category-list>
-        <restaurant-list :results="filteredRestaurantList"></restaurant-list>
+        <restaurant-list :results="restaurantList"></restaurant-list>
       </div>
     </div>
     <div class="right-container">
-      <map-view :x="currentCoordinate.x" :y="currentCoordinate.y"></map-view>
+      <map-view :coord="currentCoordinate" :results="restaurantList"></map-view>
     </div>
   </div>
 </template>
@@ -27,6 +27,7 @@ const defaultCategory = '전체';
 export default {
   name: 'App',
   created() {
+    this.resetCategories();
     this.categories = category_list.map(c => {
       return { ...c, selected: c.name === defaultCategory };
     });
@@ -39,7 +40,6 @@ export default {
   data() {
     return {
       restaurantList: [],
-      filteredRestaurantList: [],
       categories: [],
       currentCoordinate: { x: '0', y: '0' }
     };
@@ -51,8 +51,20 @@ export default {
     MapView
   },
   methods: {
+    resetCategories() {
+      this.categories = category_list.map(c => {
+        return { ...c, selected: c.name === defaultCategory };
+      });
+    },
+    getCurrentCoordinate() {
+      navigator.geolocation.getCurrentPosition(p => {
+        this.currentCoordinate.x = p.coords.longitude.toString();
+        this.currentCoordinate.y = p.coords.latitude.toString();
+      });
+    },
     receiveQuery(query) {
       console.log(query);
+      this.resetCategories();
       this.requestGc(query);
     },
     selectCategory(category, i) {
@@ -101,11 +113,22 @@ export default {
       const coord = `${this.currentCoordinate.x},${this.currentCoordinate.y}`;
       const boundary = this.makeBoundary(this.currentCoordinate.x, this.currentCoordinate.y);
       const response = await getPlaces(query, coord, boundary, 50);
-      this.restaurantList = response.data.result.place.list;
-      this.filteredRestaurantList = this.restaurantList;
+
+      if (response.data.result.place) {
+        this.restaurantList = response.data.result.place.list;
+      } else {
+        this.restaurantList = [];
+        // this.getCurrentCoordinate();
+        // errorProccessor({
+        //   code: 201,
+        //   message: '검색 결과가 없습니다. 정확한 주소를 입력하세요.'
+        // });
+      }
+
+      // this.filteredRestaurantList = this.restaurantList;
     },
     makeBoundary(x, y) {
-      const difference = 0.004;
+      const difference = 0.002;
       const minX = x - difference;
       const minY = y - difference;
       const maxX = x + difference;
