@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <app-header></app-header>
     <div class="left-container">
       <div class="container-wrapper">
         <address-form @enter="receiveQuery"></address-form>
@@ -15,6 +16,7 @@
 
 <script>
 import AddressForm from './components/AddressForm.vue';
+import AppHeader from './components/AppHeader.vue';
 import CategoryList from './components/CategoryList.vue';
 import RestaurantList from './components/RestaurantList.vue';
 import MapView from './components/MapView.vue';
@@ -45,6 +47,7 @@ export default {
     };
   },
   components: {
+    AppHeader,
     AddressForm,
     CategoryList,
     RestaurantList,
@@ -87,8 +90,6 @@ export default {
     async requestGc(query) {
       try {
         const { data } = await getGc(query);
-        console.log(data.totalCount);
-        console.log(data.results[0]);
         if (data.totalCount) {
           this.currentCoordinate.x = data.results[0]['x'];
           this.currentCoordinate.y = data.results[0]['y'];
@@ -117,7 +118,6 @@ export default {
       const { data } = await getPlaces(query, coord, boundary, 50);
 
       if (data.result.place) {
-        console.log(data.result.place);
         this.restaurantList = data.result.place.list;
       } else {
         this.restaurantList = [];
