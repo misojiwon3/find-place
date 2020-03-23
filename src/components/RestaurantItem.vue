@@ -3,8 +3,8 @@
     <div class="name">{{ item.name }}</div>
     <div class="category-tel">
       <span class="category">{{ displayCategory }}</span>
-      |
-      <span class="tel">{{ item.tel }}</span>
+      <span> | </span>
+      <span class="tel">{{ checkTelNumber }}</span>
     </div>
     <div class="address">{{ item.roadAddress }}</div>
     <!-- <div class="tel">{{ item.tel }}</div> -->
@@ -24,6 +24,14 @@ export default {
         categories.splice(index, 1);
       }
       return categories[0];
+    },
+    checkTelNumber() {
+      console.log(this.item.tel);
+      if (this.item.tel) {
+        return this.item.tel;
+      } else {
+        return '-';
+      }
     }
   }
 };
