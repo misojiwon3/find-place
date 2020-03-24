@@ -46,7 +46,19 @@ export default {
       value.map(r => {
         new naver.maps.Marker({
           position: new naver.maps.LatLng(r.y, r.x),
-          map: map
+          map: map,
+          icon: {
+            content:
+              `<div class="marker">
+              <img src="./marker.png" style="width:40px;height:40px;z-index=10;position:absolute;">
+              <div class="marker-background" style="background-color:white;width:20px;height:20px;position:absolute;top:5px;left:10px;z-index:0;border-radius:20px;"></div>
+              <span class="marker-number" style="position:absolute;width:40px;top:7px;font-weight:900;text-align:center;">` +
+              (Number(r.index) + 1) +
+              `</span>
+            </div>`,
+            size: new naver.maps.Size(38, 58),
+            anchor: new naver.maps.Point(19, 58)
+          }
         });
       });
     }
@@ -57,4 +69,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.marker-number {
+  position: absolute;
+  left: 0;
+  top: 5px;
+}
+</style>

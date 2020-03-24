@@ -1,5 +1,6 @@
 <template>
   <div class="list-item">
+    <div class="number">{{ Number(item.index) + 1 }}</div>
     <div class="name">{{ item.name }}</div>
     <div class="category-tel">
       <span class="category">{{ displayCategory }}</span>
@@ -56,6 +57,12 @@ export default {
   position: relative;
   left: 0;
   padding: 0 0 2px 0;
+}
+.number {
+  width: 20px;
+  display: inline-block;
+  position: relative;
+  top: -45px;
 }
 .category {
   color: #777777;
