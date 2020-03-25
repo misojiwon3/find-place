@@ -27,7 +27,6 @@ export default {
       return categories[0];
     },
     checkTelNumber() {
-      console.log(this.item.tel);
       if (this.item.tel) {
         return this.item.tel;
       } else {
@@ -62,7 +61,6 @@ export default {
   width: 20px;
   display: inline-block;
   position: relative;
-  top: -45px;
 }
 .category {
   color: #777777;
